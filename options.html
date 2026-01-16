@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>BO Manager Settings</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; max-width: 800px; margin: 0 auto; }
+    .card { border: 1px solid #ccc; padding: 15px; margin-bottom: 20px; border-radius: 5px; background: #f9f9f9; }
+    label { display: block; margin-top: 10px; font-weight: bold; }
+    input[type="text"], input[type="url"] { width: 100%; padding: 8px; margin-top: 5px; box-sizing: border-box; }
+    button { padding: 10px 15px; cursor: pointer; background: #007bff; color: white; border: none; border-radius: 3px; }
+    button.secondary { background: #6c757d; }
+    button.danger { background: #dc3545; }
+    .row { display: flex; gap: 10px; margin-bottom: 5px; }
+    #status { margin-top: 10px; color: green; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>Backoffice Configuration</h1>
+
+  <div class="card">
+    <h3>Team Sharing</h3>
+    <button id="exportBtn" class="secondary">Export Config (JSON)</button>
+    <button id="importBtn" class="secondary">Import Config (JSON)</button>
+    <input type="file" id="fileInput" style="display:none" accept=".json">
+    <div id="status"></div>
+  </div>
+
+  <div class="card">
+    <h3>Add New Provider</h3>
+    <label>Provider Name:</label>
+    <input type="text" id="pName" placeholder="e.g. Agency A">
+    
+    <label>Login URL:</label>
+    <input type="url" id="pUrl" placeholder="https://...">
+
+    <label>Inputs (CSS Selector -> Value):</label>
+    <div id="inputsContainer">
+      <div class="row">
+        <input type="text" class="sel" placeholder="#username or input[name='email']">
+        <input type="text" class="val" placeholder="admin123">
+      </div>
+      <div class="row">
+        <input type="text" class="sel" placeholder="#password">
+        <input type="text" class="val" placeholder="secretPass">
+      </div>
+    </div>
+    <button type="button" id="addInputRow" class="secondary" style="margin-top:5px; font-size: 12px;">+ Add Field (e.g. Code)</button>
+
+    <label>
+      <input type="checkbox" id="autoSubmit"> Auto-Submit?
+    </label>
+    <input type="text" id="submitSel" placeholder="Submit Button Selector (e.g. #login-btn)" style="display:none;">
+
+    <br><br>
+    <button id="saveBtn">Save Provider</button>
+  </div>
+
+  <h3>Saved Providers</h3>
+  <ul id="providerList"></ul>
+
+  <script src="options.js"></script>
+</body>
+</html>

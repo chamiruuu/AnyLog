@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { width: 300px; font-family: sans-serif; padding: 10px; }
+    input { width: 100%; padding: 10px; box-sizing: border-box; margin-bottom: 10px; font-size: 16px;}
+    .item { padding: 10px; border-bottom: 1px solid #eee; cursor: pointer; display: flex; justify-content: space-between; align-items: center;}
+    .item:hover { background: #f0f0f0; }
+    .item-name { font-weight: bold; }
+    button#settings { background: none; border: none; color: #888; cursor: pointer; font-size: 12px; text-decoration: underline; margin-top: 10px;}
+  </style>
+</head>
+<body>
+  <input type="text" id="search" placeholder="Search Provider..." autofocus>
+  <div id="results"></div>
+  <button id="settings">Manage Settings</button>
+  <script src="popup.js"></script>
+</body>
+</html>
