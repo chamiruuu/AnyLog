@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "BO Auto-Filler",
+  "name": "AnyLog",
   "version": "1.0",
   "description": "Search, Open, and Autofill Backoffice Logins.",
   "permissions": [
@@ -10,8 +10,14 @@
   "host_permissions": [
     "<all_urls>"
   ],
+  "icons": {
+    "16": "icon2.png",
+    "48": "icon2.png",
+    "128": "icon2.png"
+  },
   "action": {
-    "default_popup": "popup.html"
+    "default_popup": "popup.html",
+    "default_icon": "icon2.png"
   },
   "options_page": "options.html",
   "content_scripts": [

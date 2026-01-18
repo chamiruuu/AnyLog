@@ -1,19 +1,59 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <style>
-    body { width: 300px; font-family: sans-serif; padding: 10px; }
-    input { width: 100%; padding: 10px; box-sizing: border-box; margin-bottom: 10px; font-size: 16px;}
-    .item { padding: 10px; border-bottom: 1px solid #eee; cursor: pointer; display: flex; justify-content: space-between; align-items: center;}
-    .item:hover { background: #f0f0f0; }
-    .item-name { font-weight: bold; }
-    button#settings { background: none; border: none; color: #888; cursor: pointer; font-size: 12px; text-decoration: underline; margin-top: 10px;}
-  </style>
+    <style>
+        body { width: 320px; font-family: sans-serif; padding: 10px; background: #222; color: #fff; margin: 0; }
+        
+        /* Search Bar */
+        #search-container { padding: 10px 10px 5px 10px; position: sticky; top: 0; background: #222; z-index: 10; }
+        input { 
+            width: 100%; padding: 10px; border-radius: 5px; border: none; 
+            background: #333; color: white; box-sizing: border-box; font-size: 14px; outline: none;
+        }
+        input:focus { background: #444; border: 1px solid #007bff; }
+
+        /* List Area */
+        #list { padding: 0 10px; margin-bottom: 50px; } /* Bottom margin for footer */
+        .btn {
+            display: block; width: 100%; padding: 12px; margin-bottom: 8px;
+            background: #3a3a3a; color: #eee; border: none; border-radius: 5px;
+            cursor: pointer; text-align: left; transition: 0.2s; font-size: 13px;
+            text-decoration: none; box-sizing: border-box;
+            border-left: 3px solid transparent;
+        }
+        .btn:hover { background: #444; border-left: 3px solid #007bff; }
+        .no-results { text-align: center; color: #777; margin-top: 20px; display: none; }
+
+        /* Footer (Import Button) */
+        .footer {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            background: #1a1a1a; padding: 10px; border-top: 1px solid #333;
+            text-align: center;
+        }
+        .import-btn {
+            background: transparent; color: #888; border: 1px solid #444;
+            padding: 5px 15px; border-radius: 4px; cursor: pointer; font-size: 11px;
+            transition: 0.2s;
+        }
+        .import-btn:hover { border-color: #666; color: #fff; }
+        #status { font-size: 11px; color: #4caf50; display: none; margin-left: 10px; }
+    </style>
 </head>
 <body>
-  <input type="text" id="search" placeholder="Search Provider..." autofocus>
-  <div id="results"></div>
-  <button id="settings">Manage Settings</button>
-  <script src="popup.js"></script>
+    <div id="search-container">
+        <input type="text" id="search" placeholder="Search provider..." autofocus>
+    </div>
+
+    <div id="list"></div>
+    <div id="no-results" class="no-results">No matches found</div>
+
+    <input type="file" id="fileInput" style="display:none" accept=".json">
+
+    <div class="footer">
+        <button id="importBtn" class="import-btn">Import Config</button>
+        <span id="status">Updated!</span>
+    </div>
+
+    <script src="popup.js"></script>
 </body>
 </html>
