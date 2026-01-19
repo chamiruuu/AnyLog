@@ -16,12 +16,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 2. SEARCH FILTER
     search.addEventListener('keyup', (e) => {
+        // If the key is ENTER, ignore this handler (handled by keydown below)
+        if (e.key === 'Enter') return;
+
         const term = e.target.value.toLowerCase();
         const filtered = allProviders.filter(p => 
             p.name.toLowerCase().includes(term) || 
             p.url.toLowerCase().includes(term)
         );
         renderList(filtered);
+    });
+
+    // --- NEW: PRESS ENTER TO OPEN FIRST RESULT ---
+    search.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault(); // Stop default input behavior
+            
+            // Find the first visible button in the list
+            const firstButton = list.querySelector('.btn');
+            
+            // If a button exists, click it!
+            if (firstButton) {
+                firstButton.click();
+            }
+        }
     });
 
     // 3. IMPORT LOGIC
@@ -45,6 +63,20 @@ document.addEventListener('DOMContentLoaded', () => {
         };
         reader.readAsText(file);
     });
+
+    // --- HELPER: Find Common Prefix ---
+    function getCommonPrefix(strings) {
+        if (!strings || strings.length === 0) return "";
+        let prefix = strings[0];
+        
+        for (let i = 1; i < strings.length; i++) {
+            while (strings[i].indexOf(prefix) !== 0) {
+                prefix = prefix.substring(0, prefix.length - 1);
+                if (prefix === "") return "";
+            }
+        }
+        return prefix.replace(/[\s\-\(\)\[\]]+$/, "");
+    }
 
     // --- RENDER FUNCTION ---
     function renderList(providers) {
@@ -75,28 +107,28 @@ document.addEventListener('DOMContentLoaded', () => {
             const btn = document.createElement('div');
             btn.className = 'btn';
 
-            // Determine Label
             let label = "";
             let badge = "";
 
             if (groupItems.length > 1) {
-                // Smart Name: "JILI - CNY" becomes "JILI"
-                const commonName = groupItems[0].name.split('-')[0].trim();
+                const allNames = groupItems.map(g => g.name);
+                let commonName = getCommonPrefix(allNames);
+
+                if (commonName.length < 2) { 
+                    commonName = groupItems[0].name.split(/[\-\(]/)[0].trim();
+                }
+
                 label = `<strong>${commonName}</strong>`;
                 badge = `<span style="font-size:10px; background:#555; padding:2px 6px; border-radius:10px; margin-left:8px;">${groupItems.length} Accounts</span>`;
             } else {
-                // Single Item: Show full name
                 label = groupItems[0].name;
             }
 
-            // Render Button
             btn.innerHTML = `<div style="display:flex; justify-content:space-between; align-items:center;">
                                 <span>${label}</span>
                                 ${badge}
                              </div>`;
             
-            // CLICK ACTION: Just open the link. 
-            // The content script will handle the account selection on the page.
             btn.onclick = () => window.open(url, '_blank');
 
             list.appendChild(btn);
