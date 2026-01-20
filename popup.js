@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // 1. LOAD SAVED DATA
     // --- ADMIN SETTING: PASTE YOUR LINK HERE ---
-    const HARDCODED_LINK = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRsy3VIwxjFl-GQ06B1uik7qmB1ZNNu3hgtSVj0W8wRKoMAXhYyzZXmBafSMnhF_3_bG9tMYk19XJhL/pubhtml"; 
+    const HARDCODED_LINK = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRsy3VIwxjFl-GQ06B1uik7qmB1ZNNu3hgtSVj0W8wRKoMAXhYyzZXmBafSMnhF_3_bG9tMYk19XJhL/pub?output=csv"; 
     // -------------------------------------------
 
     // 1. LOAD SAVED DATA
