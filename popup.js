@@ -4,26 +4,27 @@ document.addEventListener('DOMContentLoaded', async () => {
     const status = document.getElementById('status');
     const verDisplay = document.getElementById('versionDisplay');
 
-    // 1. LOAD SAVED DATA
-    // --- ADMIN SETTING: PASTE YOUR LINK HERE ---
+    // 1. ADMIN SETTING: YOUR HARDCODED LINK
     const HARDCODED_LINK = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRsy3VIwxjFl-GQ06B1uik7qmB1ZNNu3hgtSVj0W8wRKoMAXhYyzZXmBafSMnhF_3_bG9tMYk19XJhL/pub?output=csv"; 
     // -------------------------------------------
 
-    // 1. LOAD SAVED DATA
+    // 2. DETERMINE WHICH LINK TO USE
     const config = await chrome.storage.local.get(['sheetUrl', 'providers', 'configVersion']);
     
-    // Use the saved link from Options if it exists; otherwise use your Hardcoded Link
+    // Priority: Manual Link (from Options) > Hardcoded Link
     const activeLink = config.sheetUrl || HARDCODED_LINK;
     let providers = config.providers || [];
     
     // Display saved version immediately
-    if (config.configVersion) verDisplay.innerText = "Config: " + config.configVersion;
+    if (config.configVersion && verDisplay) verDisplay.innerText = "Config: " + config.configVersion;
 
-    // 2. SYNC FROM SHEET (If URL exists)
-    if (config.sheetUrl) {
+    // 3. SYNC FROM SHEET (Uses activeLink now!)
+    if (activeLink) {
         try {
-            status.innerText = "Syncing...";
-            const response = await fetch(config.sheetUrl);
+            if(status) status.innerText = "Syncing...";
+            
+            // ERROR WAS HERE: We must fetch 'activeLink', not 'config.sheetUrl'
+            const response = await fetch(activeLink);
             const csvText = await response.text();
             
             // Parse and Separate Version
@@ -32,20 +33,26 @@ document.addEventListener('DOMContentLoaded', async () => {
             
             // UPDATE UI VERSION
             if (result.version) {
-                verDisplay.innerText = "Config: " + result.version;
+                if(verDisplay) verDisplay.innerText = "Config: " + result.version;
                 chrome.storage.local.set({ configVersion: result.version });
             }
 
             chrome.storage.local.set({ providers: providers });
-            status.innerText = "Updated";
-            setTimeout(() => status.innerText = "", 2000);
+            
+            if(status) {
+                status.innerText = "Updated";
+                setTimeout(() => status.innerText = "", 2000);
+            }
 
         } catch (e) {
-            status.innerText = "Sync Error";
-            status.style.color = "red";
+            console.error(e);
+            if(status) {
+                status.innerText = "Sync Error";
+                status.style.color = "red";
+            }
         }
     } else if (providers.length === 0) {
-        list.innerHTML = "<div style='text-align:center; padding:20px; color:#777'>No Config.<br>Go to Options.</div>";
+        list.innerHTML = "<div style='text-align:center; padding:20px; color:#777'>No Config Link Found.</div>";
         return;
     }
 
@@ -68,7 +75,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         let currentVal = '';
         let insideQuote = false;
         
-        // Robust CSV Splitter
         for (let i = 0; i < text.length; i++) {
             const char = text[i];
             const nextChar = text[i+1];
@@ -93,13 +99,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         rows.forEach((r, i) => {
             if(r.length < 2) return;
-            // Map: Name, URL, User, Pass, Merch, UserSel, PassSel, MerchSel, SubmitSel
             const [name, url, user, pass, merch, userSel, passSel, merchSel, submitSel] = r;
             
-            // CHECK FOR SPECIAL VERSION ROW
             if (name && name.trim().toUpperCase() === "VERSION") {
-                foundVersion = url.trim(); // Grab the "0119" from the URL column
-                return; // Skip adding this to the list
+                foundVersion = url.trim(); 
+                return; 
             }
 
             const inputs = [];
@@ -122,6 +126,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     function renderList(items) {
         list.innerHTML = '';
+        if(items.length === 0) {
+            list.innerHTML = "<div class='no-results'>No matches</div>";
+            return;
+        }
         items.forEach(p => {
             const btn = document.createElement('div');
             btn.className = 'btn';
