@@ -5,7 +5,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     const verDisplay = document.getElementById('versionDisplay');
 
     // 1. LOAD SAVED DATA
+    // --- ADMIN SETTING: PASTE YOUR LINK HERE ---
+    const HARDCODED_LINK = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRsy3VIwxjFl-GQ06B1uik7qmB1ZNNu3hgtSVj0W8wRKoMAXhYyzZXmBafSMnhF_3_bG9tMYk19XJhL/pubhtml"; 
+    // -------------------------------------------
+
+    // 1. LOAD SAVED DATA
     const config = await chrome.storage.local.get(['sheetUrl', 'providers', 'configVersion']);
+    
+    // Use the saved link from Options if it exists; otherwise use your Hardcoded Link
+    const activeLink = config.sheetUrl || HARDCODED_LINK;
     let providers = config.providers || [];
     
     // Display saved version immediately
