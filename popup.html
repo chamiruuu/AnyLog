@@ -6,37 +6,18 @@
         
         /* Search Bar */
         #search-container { padding: 10px 10px 5px 10px; position: sticky; top: 0; background: #222; z-index: 10; }
-        input { 
-            width: 100%; padding: 10px; border-radius: 5px; border: none; 
-            background: #333; color: white; box-sizing: border-box; font-size: 14px; outline: none;
-        }
+        input { width: 100%; padding: 10px; border-radius: 5px; border: none; background: #333; color: white; box-sizing: border-box; font-size: 14px; outline: none; }
         input:focus { background: #444; border: 1px solid #007bff; }
 
         /* List Area */
-        #list { padding: 0 10px; margin-bottom: 50px; } /* Bottom margin for footer */
-        .btn {
-            display: block; width: 100%; padding: 12px; margin-bottom: 8px;
-            background: #3a3a3a; color: #eee; border: none; border-radius: 5px;
-            cursor: pointer; text-align: left; transition: 0.2s; font-size: 13px;
-            text-decoration: none; box-sizing: border-box;
-            border-left: 3px solid transparent;
-        }
+        #list { padding: 0 10px; margin-bottom: 40px; } /* Space for footer */
+        .btn { display: block; width: 100%; padding: 12px; margin-bottom: 8px; background: #3a3a3a; color: #eee; border: none; border-radius: 5px; cursor: pointer; text-align: left; transition: 0.2s; font-size: 13px; border-left: 3px solid transparent; }
         .btn:hover { background: #444; border-left: 3px solid #007bff; }
-        .no-results { text-align: center; color: #777; margin-top: 20px; display: none; }
+        .no-results { text-align: center; color: #777; margin-top: 20px; }
 
-        /* Footer (Import Button) */
-        .footer {
-            position: fixed; bottom: 0; left: 0; right: 0;
-            background: #1a1a1a; padding: 10px; border-top: 1px solid #333;
-            text-align: center;
-        }
-        .import-btn {
-            background: transparent; color: #888; border: 1px solid #444;
-            padding: 5px 15px; border-radius: 4px; cursor: pointer; font-size: 11px;
-            transition: 0.2s;
-        }
-        .import-btn:hover { border-color: #666; color: #fff; }
-        #status { font-size: 11px; color: #4caf50; display: none; margin-left: 10px; }
+        /* Footer */
+        .footer { position: fixed; bottom: 0; left: 0; right: 0; background: #1a1a1a; padding: 8px 15px; border-top: 1px solid #333; display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #666; }
+        #versionDisplay { color: #007bff; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -45,13 +26,10 @@
     </div>
 
     <div id="list"></div>
-    <div id="no-results" class="no-results">No matches found</div>
-
-    <input type="file" id="fileInput" style="display:none" accept=".json">
 
     <div class="footer">
-        <button id="importBtn" class="import-btn">Import Config</button>
-        <span id="status">Updated!</span>
+        <span id="status">Ready</span>
+        <span id="versionDisplay">v.--</span>
     </div>
 
     <script src="popup.js"></script>

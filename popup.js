@@ -1,136 +1,127 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     const list = document.getElementById('list');
     const search = document.getElementById('search');
-    const noResults = document.getElementById('no-results');
-    const importBtn = document.getElementById('importBtn');
-    const fileInput = document.getElementById('fileInput');
     const status = document.getElementById('status');
+    const verDisplay = document.getElementById('versionDisplay');
 
-    let allProviders = [];
+    // 1. LOAD SAVED DATA
+    const config = await chrome.storage.local.get(['sheetUrl', 'providers', 'configVersion']);
+    let providers = config.providers || [];
+    
+    // Display saved version immediately
+    if (config.configVersion) verDisplay.innerText = "Config: " + config.configVersion;
 
-    // 1. LOAD DATA
-    chrome.storage.local.get({ providers: [] }, (data) => {
-        allProviders = data.providers;
-        renderList(allProviders);
-    });
-
-    // 2. SEARCH FILTER
-    search.addEventListener('keyup', (e) => {
-        // If the key is ENTER, ignore this handler (handled by keydown below)
-        if (e.key === 'Enter') return;
-
-        const term = e.target.value.toLowerCase();
-        const filtered = allProviders.filter(p => 
-            p.name.toLowerCase().includes(term) || 
-            p.url.toLowerCase().includes(term)
-        );
-        renderList(filtered);
-    });
-
-    // --- NEW: PRESS ENTER TO OPEN FIRST RESULT ---
-    search.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-            e.preventDefault(); // Stop default input behavior
+    // 2. SYNC FROM SHEET (If URL exists)
+    if (config.sheetUrl) {
+        try {
+            status.innerText = "Syncing...";
+            const response = await fetch(config.sheetUrl);
+            const csvText = await response.text();
             
-            // Find the first visible button in the list
-            const firstButton = list.querySelector('.btn');
+            // Parse and Separate Version
+            const result = parseCSV(csvText);
+            providers = result.data;
             
-            // If a button exists, click it!
-            if (firstButton) {
-                firstButton.click();
+            // UPDATE UI VERSION
+            if (result.version) {
+                verDisplay.innerText = "Config: " + result.version;
+                chrome.storage.local.set({ configVersion: result.version });
             }
-        }
-    });
 
-    // 3. IMPORT LOGIC
-    importBtn.addEventListener('click', () => fileInput.click());
-    fileInput.addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = (event) => {
-            try {
-                const json = JSON.parse(event.target.result);
-                if (Array.isArray(json)) {
-                    chrome.storage.local.set({ providers: json }, () => {
-                        status.style.display = 'inline';
-                        setTimeout(() => status.style.display = 'none', 2000);
-                        allProviders = json;
-                        renderList(allProviders);
-                    });
-                } else alert("Invalid JSON format");
-            } catch (err) { alert("Error parsing JSON"); }
-        };
-        reader.readAsText(file);
-    });
+            chrome.storage.local.set({ providers: providers });
+            status.innerText = "Updated";
+            setTimeout(() => status.innerText = "", 2000);
 
-    // --- HELPER: Find Common Prefix ---
-    function getCommonPrefix(strings) {
-        if (!strings || strings.length === 0) return "";
-        let prefix = strings[0];
-        
-        for (let i = 1; i < strings.length; i++) {
-            while (strings[i].indexOf(prefix) !== 0) {
-                prefix = prefix.substring(0, prefix.length - 1);
-                if (prefix === "") return "";
-            }
+        } catch (e) {
+            status.innerText = "Sync Error";
+            status.style.color = "red";
         }
-        return prefix.replace(/[\s\-\(\)\[\]]+$/, "");
+    } else if (providers.length === 0) {
+        list.innerHTML = "<div style='text-align:center; padding:20px; color:#777'>No Config.<br>Go to Options.</div>";
+        return;
     }
 
-    // --- RENDER FUNCTION ---
-    function renderList(providers) {
-        list.innerHTML = '';
-        noResults.style.display = 'none';
+    renderList(providers);
 
-        if (providers.length === 0) {
-            noResults.style.display = 'block';
-            return;
+    // SEARCH LOGIC
+    search.addEventListener('keyup', (e) => {
+        if(e.key === 'Enter') {
+            const first = list.querySelector('.btn');
+            if(first) first.click(); return;
         }
+        const term = e.target.value.toLowerCase();
+        renderList(providers.filter(p => p.name.toLowerCase().includes(term)));
+    });
 
-        // 1. Group by URL
-        const groups = {};
-        providers.forEach(p => {
-            const url = p.url.trim().replace(/\/$/, ""); 
-            if (!groups[url]) groups[url] = [];
-            groups[url].push(p);
-        });
+    // --- PARSER ---
+    function parseCSV(text) {
+        const rows = [];
+        let currentRow = [];
+        let currentVal = '';
+        let insideQuote = false;
+        
+        // Robust CSV Splitter
+        for (let i = 0; i < text.length; i++) {
+            const char = text[i];
+            const nextChar = text[i+1];
+            if (char === '"') {
+                if (insideQuote && nextChar === '"') { currentVal += '"'; i++; }
+                else { insideQuote = !insideQuote; }
+            } else if (char === ',' && !insideQuote) {
+                currentRow.push(currentVal); currentVal = '';
+            } else if ((char === '\n' || char === '\r') && !insideQuote) {
+                if (currentVal || currentRow.length > 0) currentRow.push(currentVal);
+                if (currentRow.length > 0) rows.push(currentRow);
+                currentRow = []; currentVal = '';
+            } else { currentVal += char; }
+        }
+        if (currentVal || currentRow.length > 0) currentRow.push(currentVal);
+        if (currentRow.length > 0) rows.push(currentRow);
 
-        // 2. Sort Groups Alphabetically
-        const sortedKeys = Object.keys(groups).sort((a, b) => {
-            return groups[a][0].name.localeCompare(groups[b][0].name);
-        });
+        rows.shift(); // Remove Headers
 
-        // 3. Create Buttons
-        sortedKeys.forEach(url => {
-            const groupItems = groups[url];
-            const btn = document.createElement('div');
-            btn.className = 'btn';
+        const cleanData = [];
+        let foundVersion = null;
 
-            let label = "";
-            let badge = "";
-
-            if (groupItems.length > 1) {
-                const allNames = groupItems.map(g => g.name);
-                let commonName = getCommonPrefix(allNames);
-
-                if (commonName.length < 2) { 
-                    commonName = groupItems[0].name.split(/[\-\(]/)[0].trim();
-                }
-
-                label = `<strong>${commonName}</strong>`;
-                badge = `<span style="font-size:10px; background:#555; padding:2px 6px; border-radius:10px; margin-left:8px;">${groupItems.length} Accounts</span>`;
-            } else {
-                label = groupItems[0].name;
+        rows.forEach((r, i) => {
+            if(r.length < 2) return;
+            // Map: Name, URL, User, Pass, Merch, UserSel, PassSel, MerchSel, SubmitSel
+            const [name, url, user, pass, merch, userSel, passSel, merchSel, submitSel] = r;
+            
+            // CHECK FOR SPECIAL VERSION ROW
+            if (name && name.trim().toUpperCase() === "VERSION") {
+                foundVersion = url.trim(); // Grab the "0119" from the URL column
+                return; // Skip adding this to the list
             }
 
-            btn.innerHTML = `<div style="display:flex; justify-content:space-between; align-items:center;">
-                                <span>${label}</span>
-                                ${badge}
-                             </div>`;
-            
-            btn.onclick = () => window.open(url, '_blank');
+            const inputs = [];
+            if(merchSel && merch) inputs.push({ sel: merchSel, val: merch });
+            if(userSel && user) inputs.push({ sel: userSel, val: user });
+            if(passSel && pass) inputs.push({ sel: passSel, val: pass });
 
+            cleanData.push({ 
+                id: i, 
+                name: name, 
+                url: url, 
+                inputs: inputs, 
+                submitSel: submitSel, 
+                autoSubmit: true 
+            });
+        });
+
+        return { data: cleanData, version: foundVersion };
+    }
+
+    function renderList(items) {
+        list.innerHTML = '';
+        items.forEach(p => {
+            const btn = document.createElement('div');
+            btn.className = 'btn';
+            btn.innerHTML = `<strong>${p.name}</strong>`;
+            btn.onclick = () => {
+                const targetUrl = p.url.includes('#') ? p.url.split('#')[0] : p.url;
+                window.open(`${targetUrl}#anylog_id=${p.id}`, '_blank');
+            };
             list.appendChild(btn);
         });
     }

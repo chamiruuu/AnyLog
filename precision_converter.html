@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Precision Converter (Auto-Download)</title>
+    <style>
+        body { font-family: sans-serif; padding: 40px; background: #f4f4f9; text-align: center; }
+        .card { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); display: inline-block; }
+        h2 { margin-top: 0; color: #333; }
+        #msg { margin-top: 20px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>JSON to Precision CSV</h2>
+        <p>Select your <b>bo_config.json</b>. The CSV file will download immediately.</p>
+        <input type="file" id="fileInput" accept=".json">
+        <div id="msg"></div>
+    </div>
+
+    <script>
+        document.getElementById('fileInput').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                try {
+                    const data = JSON.parse(event.target.result);
+                    
+                    // 1. Generate CSV Content
+                    let csv = "Name,URL,Username,Password,MerchantID,UserSelector,PassSelector,MerchantSelector,SubmitSelector\n";
+                    
+                    data.forEach(item => {
+                        let user="", pass="", merch="", userSel="", passSel="", merchSel="";
+                        
+                        if (item.inputs) {
+                            item.inputs.forEach(inp => {
+                                const s = inp.sel;
+                                const v = inp.val || "";
+                                const sl = s.toLowerCase();
+                                
+                                // Exact mapping logic
+                                if (sl.includes('password') || sl.includes('pwd') || v.length > 25 || inp.type === 'password') {
+                                    pass = v; passSel = s;
+                                } else if (sl.includes('merchant') || sl.includes('partner') || sl.includes('code') || sl.includes('mch')) {
+                                    merch = v; merchSel = s;
+                                } else {
+                                    if(!user) { user = v; userSel = s; }
+                                    else if(!merch) { merch = v; merchSel = s; }
+                                }
+                            });
+                        }
+                        
+                        // Safe CSV Escaping
+                        const row = [item.name, item.url, user, pass, merch, userSel, passSel, merchSel, item.submitSel]
+                            .map(t => `"${(t||"").toString().replace(/"/g, '""')}"`); 
+                        
+                        csv += row.join(",") + "\n";
+                    });
+
+                    // 2. Trigger Download
+                    downloadCSV(csv);
+                    document.getElementById('msg').innerText = "✅ Downloaded 'anylog_precision.csv'!";
+                    document.getElementById('msg').style.color = "green";
+
+                } catch (err) {
+                    alert("Error parsing JSON: " + err.message);
+                }
+            };
+            reader.readAsText(file);
+        });
+
+        function downloadCSV(csvString) {
+            const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            const url = URL.createObjectURL(blob);
+            link.setAttribute("href", url);
+            link.setAttribute("download", "anylog_precision.csv");
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
+</body>
+</html>

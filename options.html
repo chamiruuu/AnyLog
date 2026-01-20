@@ -1,75 +1,20 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>BO Manager Settings</title>
-  <style>
-    body { font-family: sans-serif; padding: 20px; max-width: 800px; margin: 0 auto; background-color: #f4f4f9; }
-    .card { border: 1px solid #ddd; padding: 20px; margin-bottom: 20px; border-radius: 8px; background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-    h1, h3 { color: #333; margin-top: 0; }
-    label { display: block; margin-top: 15px; font-weight: 600; color: #555; font-size: 14px; }
-    input[type="text"], input[type="url"] { width: 100%; padding: 10px; margin-top: 5px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
-    button { padding: 8px 12px; cursor: pointer; background: #007bff; color: white; border: none; border-radius: 4px; font-size: 14px; transition: background 0.2s; }
-    button:hover { background: #0056b3; }
-    
-    /* Button Variants */
-    button.secondary { background: #6c757d; }
-    button.secondary:hover { background: #545b62; }
-    button.danger { background: #dc3545; }
-    button.danger:hover { background: #c82333; }
-    button.edit { background: #ffc107; color: #333; } /* Yellow for Edit */
-    button.edit:hover { background: #e0a800; }
-
-    .row { display: flex; gap: 10px; margin-bottom: 10px; align-items: center; }
-    .row input { margin-top: 0; }
-    #status { margin-top: 15px; font-weight: bold; min-height: 20px; }
-    
-    ul { list-style: none; padding: 0; }
-    li { background: #fff; border: 1px solid #eee; margin-bottom: 8px; padding: 15px; display: flex; justify-content: space-between; align-items: center; border-radius: 4px; }
-    .actions { display: flex; gap: 5px; } /* Groups Edit/Delete buttons */
-  </style>
+    <title>AnyLog Config</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; width: 350px; background: #222; color: #fff; }
+        input { width: 100%; padding: 10px; background: #333; border: 1px solid #555; color: #fff; margin: 10px 0; box-sizing: border-box;}
+        button { width: 100%; padding: 10px; background: #007bff; color: white; border: none; cursor: pointer; }
+        .hint { font-size: 11px; color: #aaa; margin-bottom: 10px; }
+    </style>
 </head>
 <body>
-  <h1>Backoffice Configuration</h1>
-
-  <div class="card">
-    <h3>Team Sharing</h3>
-    <div style="display: flex; gap: 10px;">
-        <button id="exportBtn" class="secondary">Export Config</button>
-        <button id="importBtn" class="secondary">Import Config</button>
-    </div>
-    <input type="file" id="fileInput" style="display:none" accept=".json">
-    <div id="status"></div>
-  </div>
-
-  <div class="card">
-    <h3 id="formTitle">Add New Provider</h3> <label>Provider Name</label>
-    <input type="text" id="pName" placeholder="e.g. C-Sports (Duty 1)">
-    
-    <label>Login URL</label>
-    <input type="url" id="pUrl" placeholder="https://bo.example.com/login">
-
-    <label>Auto-Fill Fields (Selector &rarr; Value)</label>
-    <div id="inputsContainer">
-      </div>
-    <button type="button" id="addInputRow" class="secondary" style="margin-top: 10px; font-size: 12px;">+ Add Another Field</button>
-
-    <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #eee;">
-        <label style="display: inline-flex; align-items: center; cursor: pointer;">
-          <input type="checkbox" id="autoSubmit" style="margin-right: 8px;"> 
-          Enable Auto-Submit
-        </label>
-        <input type="text" id="submitSel" placeholder="Submit Button Selector (e.g. #login-btn)" style="display:none; margin-top: 10px;">
-    </div>
-
-    <div style="margin-top: 20px; display: flex; gap: 10px;">
-        <button id="saveBtn" style="flex: 1;">Save Provider</button>
-        <button id="cancelBtn" class="secondary" style="display:none;">Cancel</button>
-    </div>
-  </div>
-
-  <h3>Saved Providers</h3>
-  <ul id="providerList"></ul>
-
-  <script src="options.js"></script>
+    <h3>Sync Configuration</h3>
+    <div class="hint">Paste the Google Sheet <b>CSV</b> Link here:</div>
+    <input type="text" id="sheetUrl" placeholder="https://docs.google.com/spreadsheets/d/e/2PACX-1vRsy3VIwxjFl-GQ06B1uik7qmB1ZNNu3hgtSVj0W8wRKoMAXhYyzZXmBafSMnhF_3_bG9tMYk19XJhL/pub?output=csv">
+    <button id="save">Save & Sync</button>
+    <div id="status" style="margin-top:10px; text-align:center; font-size:12px;"></div>
+    <script src="options.js"></script>
 </body>
 </html>

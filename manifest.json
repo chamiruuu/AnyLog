@@ -1,31 +1,21 @@
 {
   "manifest_version": 3,
   "name": "AnyLog",
-  "version": "1.0",
-  "description": "Search, Open, and Autofill Backoffice Logins.",
-  "permissions": [
-    "storage",
-    "tabs"
-  ],
-  "host_permissions": [
-    "<all_urls>"
-  ],
-  "icons": {
-    "16": "icon2.png",
-    "48": "icon2.png",
-    "128": "icon2.png"
-  },
+  "version": "2.0",
+  "description": "Team Sync Form Filler",
+  "permissions": ["storage", "tabs"],
+  "host_permissions": ["<all_urls>"],
   "action": {
     "default_popup": "popup.html",
-    "default_icon": "icon2.png"
+    "default_icon": "icon.png"
   },
+  "icons": { "128": "icon.png" },
   "options_page": "options.html",
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
       "js": ["content.js"],
-      "run_at": "document_end",
-      "all_frames": true
+      "run_at": "document_end"
     }
   ]
 }
