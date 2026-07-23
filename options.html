@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AnyLog Config</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; width: 350px; background: #222; color: #fff; }
+        input { width: 100%; padding: 10px; background: #333; border: 1px solid #555; color: #fff; margin: 10px 0; box-sizing: border-box;}
+        button { width: 100%; padding: 10px; background: #007bff; color: white; border: none; cursor: pointer; }
+        .hint { font-size: 11px; color: #aaa; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <h3>Sync Configuration</h3>
+    <div class="hint">Paste the Google Sheet <b>CSV</b> Link here:</div>
+    <input type="text" id="sheetUrl" placeholder="https://docs.google.com/spreadsheets/d/e/2PACX-1vRsy3VIwxjFl-GQ06B1uik7qmB1ZNNu3hgtSVj0W8wRKoMAXhYyzZXmBafSMnhF_3_bG9tMYk19XJhL/pub?output=csv">
+    <button id="save">Save & Sync</button>
+    <div id="status" style="margin-top:10px; text-align:center; font-size:12px;"></div>
+    <script src="options.js"></script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { width: 320px; font-family: sans-serif; padding: 10px; background: #222; color: #fff; margin: 0; }
+        
+        /* Search Bar */
+        #search-container { padding: 10px 10px 5px 10px; position: sticky; top: 0; background: #222; z-index: 10; }
+        input { width: 100%; padding: 10px; border-radius: 5px; border: none; background: #333; color: white; box-sizing: border-box; font-size: 14px; outline: none; }
+        input:focus { background: #444; border: 1px solid #007bff; }
+
+        /* List Area */
+        #list { padding: 0 10px; margin-bottom: 40px; } /* Space for footer */
+        .btn { display: block; width: 100%; padding: 12px; margin-bottom: 8px; background: #3a3a3a; color: #eee; border: none; border-radius: 5px; cursor: pointer; text-align: left; transition: 0.2s; font-size: 13px; border-left: 3px solid transparent; }
+        .btn:hover { background: #444; border-left: 3px solid #007bff; }
+        .no-results { text-align: center; color: #777; margin-top: 20px; }
+
+        /* Footer */
+        .footer { position: fixed; bottom: 0; left: 0; right: 0; background: #1a1a1a; padding: 8px 15px; border-top: 1px solid #333; display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #666; }
+        #versionDisplay { color: #007bff; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div id="search-container">
+        <input type="text" id="search" placeholder="Search provider..." autofocus>
+    </div>
+
+    <div id="list"></div>
+
+    <div class="footer">
+        <span id="status">Ready</span>
+        <span id="versionDisplay">v.--</span>
+    </div>
+
+    <script src="popup.js"></script>
+</body>
+</html>
