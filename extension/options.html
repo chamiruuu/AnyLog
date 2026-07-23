@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AnyLog Options</title>
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <main>
+    <header>
+      <h1>AnyLog Settings</h1>
+      <p>Configure the backend proxy, sync behavior, theme, and admin tools.</p>
+    </header>
+
+    <section>
+      <h2>Backend</h2>
+      <label>API URL <input id="apiUrl" type="url" placeholder="https://my-domain.com/api/config"></label>
+      <label>API Token <input id="apiToken" type="password" autocomplete="off" placeholder="Optional bearer token"></label>
+      <div class="row">
+        <button id="syncButton" class="primary">Sync Now</button>
+        <span id="syncStatus" role="status">Ready</span>
+      </div>
+    </section>
+
+    <section>
+      <h2>Behavior</h2>
+      <label>Sync interval, minutes <input id="syncIntervalMinutes" type="number" min="5" step="5"></label>
+      <label>Pending login TTL, ms <input id="pendingTtlMs" type="number" min="5000" step="1000"></label>
+      <label>Selector retry timeout, ms <input id="retryTimeoutMs" type="number" min="1000" step="500"></label>
+      <label>Selector retry interval, ms <input id="retryIntervalMs" type="number" min="100" step="50"></label>
+      <label class="checkbox"><input id="autoFillOnOpen" type="checkbox"> Auto-fill after opening provider URL</label>
+    </section>
+
+    <section>
+      <h2>Appearance & Role</h2>
+      <label>Theme
+        <select id="theme">
+          <option value="system">System</option>
+          <option value="light">Light</option>
+          <option value="dark">Dark</option>
+        </select>
+      </label>
+      <label>Role
+        <select id="role">
+          <option value="user">User</option>
+          <option value="admin">Admin</option>
+        </select>
+      </label>
+      <label class="checkbox"><input id="debugMode" type="checkbox"> Enable debug logs</label>
+    </section>
+
+    <section>
+      <h2>Backup</h2>
+      <label class="checkbox"><input id="includeSecretsInExport" type="checkbox"> Include secrets in export</label>
+      <div class="row">
+        <button id="exportButton">Export Backup</button>
+        <label class="file-button">Import Backup <input id="importFile" type="file" accept="application/json"></label>
+      </div>
+      <p class="hint">Provider passwords and API token are omitted unless secret export is enabled.</p>
+    </section>
+
+    <section class="admin-panel">
+      <h2>Logs</h2>
+      <div id="logs" class="logs"></div>
+      <button id="clearLogsButton">Clear Logs</button>
+    </section>
+
+    <footer>
+      <button id="saveButton" class="primary">Save Settings</button>
+      <span id="saveStatus"></span>
+    </footer>
+  </main>
+
+  <script src="storage.js"></script>
+  <script src="configClient.js"></script>
+  <script src="options.js"></script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+Name,URL,Username,Password,MerchantID,UserSelector,PassSelector,MerchantSelector,SubmitSelector,Category,Notes,Enabled,AutoSubmit,Tags,Priority,LastUpdated
+VERSION,,,,"",,,,,,Metadata,2026.07.23,true,false,,0,2026-07-23
+Acme Portal,https://portal.example.com/login,team.user@example.com,replace-me,MER-1001,input[name="email"],input[name="password"],input[name="merchant"],button[type="submit"],Payments,Primary merchant portal,true,false,"payment;daily",90,2026-07-23
+Backoffice Demo,https://backoffice.example.com,ops@example.com,replace-me,,#username,#password,,.login-submit,Operations,Demo row,true,true,"ops;admin",50,2026-07-23
+Disabled Provider,https://disabled.example.com,user,pass,,#user,#pass,,button,Archive,This row will not be returned,false,false,archive,1,2026-07-23

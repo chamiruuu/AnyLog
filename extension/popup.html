@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AnyLog Team Filler</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="fixed-header">
+      <div class="topbar">
+        <div>
+          <h1>AnyLog</h1>
+          <p id="syncMeta">Not synced yet</p>
+        </div>
+        <div class="actions">
+          <button id="syncButton" class="icon-button" title="Sync providers" aria-label="Sync providers">Sync</button>
+          <button id="optionsButton" class="icon-button" title="Open options" aria-label="Open options">Set</button>
+        </div>
+      </div>
+
+      <div class="search-wrap">
+        <label class="search-label" for="searchInput">Search</label>
+        <input id="searchInput" type="search" placeholder="Provider, tag, category..." autocomplete="off" autofocus>
+      </div>
+
+      <nav id="tabs" class="tabs" aria-label="Provider filters"></nav>
+    </header>
+
+    <section id="providerList" class="provider-list" aria-label="Providers"></section>
+
+    <section id="detail" class="detail hidden" aria-label="Provider details">
+      <div class="detail-header">
+        <button id="backButton" class="ghost-button">Back</button>
+        <button id="favoriteButton" class="ghost-button">Favorite</button>
+      </div>
+      <h2 id="detailName"></h2>
+      <dl id="detailMeta"></dl>
+      <div id="selectorHealth" class="selector-health"></div>
+      <div class="detail-actions">
+        <button id="openButton" class="primary-button">Open & Fill</button>
+        <button id="manualButton" class="secondary-button">Fill Current Page</button>
+        <button id="testButton" class="secondary-button admin-only">Test Selectors</button>
+      </div>
+      <p id="detailNotes" class="notes"></p>
+    </section>
+
+    <footer>
+      <span id="footerState">0 providers</span>
+      <span id="roleState">user</span>
+    </footer>
+  </main>
+
+  <script src="storage.js"></script>
+  <script src="configClient.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>
