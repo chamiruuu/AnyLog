@@ -105,19 +105,14 @@ Authorization: Bearer your-token
 
 ## Deploy Backend To Vercel
 
-This project is ready for Vercel. Deploy the `backend/` folder as the Vercel project root.
+This project is ready for Vercel from the repo root. You do not need to set a custom Root Directory.
 
 ### Option A: Vercel Dashboard
 
 1. Push this project to GitHub.
 2. Go to Vercel and click `Add New Project`.
 3. Import your GitHub repo.
-4. In project settings, set **Root Directory** to:
-
-```text
-backend
-```
-
+4. Keep the default root directory.
 5. Add environment variables in Vercel:
 
 Required environment variable:
@@ -146,10 +141,9 @@ Put that URL in the Chrome extension Options page as the `Backend API URL`.
 
 ### Option B: Vercel CLI
 
-From the backend folder:
+From the repo root:
 
 ```powershell
-cd backend
 npx vercel
 ```
 
