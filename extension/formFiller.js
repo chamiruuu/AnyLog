@@ -123,6 +123,8 @@ async function fillProviderForm(provider, options = {}) {
     dispatchRealisticEvents(element);
   }
 
+  await sleep(500);
+
   if (provider.autoSubmit && found.submit) {
     found.submit.focus();
     found.submit.click();
